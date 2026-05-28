@@ -1,0 +1,155 @@
+README File:
+
+A The title of the homework and the author names (you and your partner)
+    Project Gerp: Hansini Gundavarapu- hgunda01 and Jessica Charalel- jchara02
+
+B The purpose of the program
+    The purpose of the program is to implement a recreation of the program 
+    grep, in which a user can use a program to look for a certain string
+    and how many times it is found in a given directory of files. For example,
+    when the program is given the files of a certain directory followed by the
+    query "hello", gerp should be able to allow the user to see the iterations
+    of that certain body of text in the following files and directories. There
+    is also a distinction between textSensitive and textInsensitive in terms
+    of if the user wants to differentiate lowercase text with uppercase and
+    vice versa. 
+
+C Acknowledgements for any help you received, including references to outside 
+sources you consulted:
+    Data structure references from geeks for geeks and CS15 class website, 
+    stack overflow for common bugs, and our notes from the CS15 lectures. TA
+    Peter!
+
+D The files that you provided and a short description of what each file is and
+its purpose
+    gerp.cpp: Implements the gerp class; 
+    the functionality of this class is to index a given directory of files and
+    handle general query loops and search inputs
+    
+    gerp.h: Interface for the gerp class
+    
+    Directory a: A testing directory for files within a directory that we 
+    overwrote many times to test if our program would go into certain datasets
+    and written files. 
+
+    HashTable.cpp: Implements the HashTable class, the functionality of this 
+    class is to implement a hash table using open addressing with linear 
+    probing.
+    HashTable.h: Interface for the HashTable class
+    
+    main.cpp: Implementation for the main file as well as handling 
+    arguments and where they should be utilized depending on their 
+    specified index in the program
+    
+    processing.cpp: Implements the processing class; utility functions for file 
+    tree traversal and string processing for the gerp search engine.
+    
+    processing.h: Interface for the processing class so the two given functions
+    could be included in other parts of our program such as HashTable.cpp and
+    gerp.cpp
+
+    Makefile: Makefile linking all the files in the program together
+
+    unit_tests.h: unit_testing framework used specifically for HashTable
+    functions and implementation
+
+    b, c, d, y: All testing files for the program - Used to be traversed and for
+    query testing.
+    
+E How to compile and run your program
+Compile program by running: make
+Run ./gerp [any directory] [output file] - to run program.
+"Query?" will be printed and run word search queries until you want to quit. 
+Use @q to quit.
+
+F An “architectural overview,” i.e., a description of how your various program 
+modules relate.
+For example, the FSTree implementation keeps a pointer to the root DirNode.
+
+G An outline of the data structures and algorithms that you used. Given that 
+this is a data structures class, you need to always discuss any data structures
+that you used and justify why you used them. For this assignment it is 
+imperative that you explain your data structures and algorithms in detail, as 
+it will help us understand your code since there is no single right way of 
+completing this assignment.
+
+Data Structures:
+HashTable: This is the core data structure we implemented to index and search
+for specific words across files and directories. We chose a hash table because
+it allows us constant/close to constant time access for operations like
+insert and lookup which was necessary for this project. We implemented open 
+addressing with linear probing for collision resolution. Each entry in the hash 
+table stores a string key (the word) and a vector of WordOccurrence structs. 
+The WordOccurrence struct contains three indices: fileIndex 
+(index into allFilePaths), lineNumber, and lineContent 
+(index into allLineTexts). Hash
+tables also allow us to dynamically resize as needed with a time complexity of
+0(1).
+
+Vector of Vectors: We utilized this data structure to implement our gerp class.
+We chose to use a vector of vectors because during our design checkoff, we
+wanted to have constant time access, or as close as possible to make our 
+program run as fast as possible. 
+Each hash table entry contains a vector of WordOccurrence structs to handle 
+words that appear multiple times across different files and lines. A vector 
+was chosen because we need to preserve all occurrences and the order of 
+insertion.
+
+Set:
+Used in printResults() to track which (file, line) combinations have already 
+been printed. This ensures that if a word appears multiple times on the same 
+line, we only print that line once in the results.
+We chose std::set because it provides O(log n) insertion and lookup, and 
+automatically handles if a given set of data is different or the same. 
+
+Algorithms: 
+
+Directory Traversal (Recursive DFS):
+    We use a depth-first search algorithm to recursively traverse the directory 
+    tree. The traverseAndIndex() function processes all files in the current 
+    directory first, then recursively processes each subdirectory.
+    Time Complexity: O(n) where n is the total number of files and directories.
+
+Word Indexing:
+    For each line in each file, we parse words using string streams, strip 
+    leading/trailing non-alphanumeric characters using stripNonAlphaNum(), and 
+    insert each cleaned word into the hash table.
+
+stripNonAlphaNum Algorithm: Two-pointer technique that finds the first and last 
+alphanumeric characters, then extracts the substring between them. This 
+preserves internal punctuation (like in "can't") while removing surrounding 
+punctuation.
+
+Case-Sensitive Search:
+
+    Uses the hash function to find the starting position, then performs linear 
+    probing to find the exact key match.
+
+Case-Insensitive Search:
+    Converts the query to lowercase, then iterates through the entire hash 
+    table, comparing each key after converting it to lowercase. All matching 
+    entries are collected into a single result vector.
+
+Hash Function
+    We use the standard library's std::hash<std::string> function, then apply 
+    modulo to fit the index within the table bounds. This provides good 
+    distribution for most inputs while being fast to compute.
+
+H Details and an explanation of how you tested the various parts of your 
+classes and the program as a whole. You may reference the testing files that 
+you submitted to aid in your explanation.
+
+We used unit test to test specific classes and functions like the ones in 
+processing.cpp and the HashTable class. We also diff tested on tinyData, 
+small+medium+large gutenberg, which is also how we caught a few bugs our
+program had experienced. We made sure the the queries were varied and tested
+edge cases like 2 of the same query and queries with weird characters in 
+different places. In addition, we also created our own mini-directory to test
+the basic functionality of our program early on. We made sure that every file
+and folder in that directory were being traversed.
+ 
+I. Please let us know approximately how many hours you spent working on this 
+project. This should include both weeks one and two.
+Phase 1: 3.5 hours
+Phase 2: 21 hours
+
